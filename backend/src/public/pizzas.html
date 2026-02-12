@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padre Gino's 🍕 — Pizzas</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        nav a {
+            padding: 8px 16px;
+            background: #1a1a2e;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        nav a:hover {
+            opacity: 0.85;
+        }
+
+        nav a.active {
+            background: #2ecc71;
+        }
+
+        h1 {
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="/">📋 API</a>
+        <a href="/lojas">📍 Lojas</a>
+        <a href="/pizzas" class="active">🍕 Pizzas</a>
+        <a href="/admin">🛠️ Admin</a>
+    </nav>
+
+    <h1>🍕 Pizzas</h1>
+    <ul id="pizzas-list">
+        <li>A carregar...</li>
+    </ul>
+
+    <script>
+        async function loadPizzas() {
+            try {
+                const res = await fetch('/api/pizzas');
+                const pizzas = await res.json();
+                document.getElementById('pizzas-list').innerHTML = pizzas
+                    .map(pizza => `<li><strong>${pizza.nome}</strong> — ${pizza.descricao} (€${pizza.preco.toFixed(2)}) ${pizza.disponivel ? '✅' : '❌'}</li>`)
+                    .join('');
+            } catch (err) {
+                document.getElementById('pizzas-list').innerHTML = '<li>Erro ao carregar pizzas</li>';
+            }
+        }
+        loadPizzas();
+    </script>
+</body>
+
+</html>

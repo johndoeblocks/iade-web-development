@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "nome": "Margherita",
+    "descricao": "Molho de tomate, mozzarella fresca, manjericão",
+    "preco": 8.50,
+    "imagem": "/pizzas/margherita.jpg",
+    "categoria": "classicas",
+    "disponivel": true
+  },
+  {
+    "id": 2,
+    "nome": "Pepperoni",
+    "descricao": "Molho de tomate, mozzarella, pepperoni picante",
+    "preco": 10.00,
+    "imagem": "https://www.dominospizza.pt/gallery/fmobile/4931large.png",
+    "categoria": "classicas",
+    "disponivel": true
+  },
+  {
+    "id": 3,
+    "nome": "Quatro Queijos",
+    "descricao": "Mozzarella, gorgonzola, parmesão, provolone",
+    "preco": 11.50,
+    "imagem": "/pizzas/quatro-queijos.jpg",
+    "categoria": "especiais",
+    "disponivel": true
+  },
+  {
+    "id": 4,
+    "nome": "Portuguesa",
+    "descricao": "Molho de tomate, mozzarella, fiambre, ovo, azeitonas",
+    "preco": 9.50,
+    "imagem": "/pizzas/portuguesa.jpg",
+    "categoria": "classicas",
+    "disponivel": true
+  },
+  {
+    "id": 5,
+    "nome": "Diavola",
+    "descricao": "Molho de tomate, mozzarella, salame picante, piri-piri",
+    "preco": 10.50,
+    "imagem": "/pizzas/diavola.jpg",
+    "categoria": "especiais",
+    "disponivel": false
+  },
+  {
+    "id": 6,
+    "nome": "Vegetariana",
+    "descricao": "Molho de tomate, mozzarella, cogumelos, pimentos, cebola, azeitonas",
+    "preco": 9.00,
+    "imagem": "/pizzas/vegetariana.jpg",
+    "categoria": "especiais",
+    "disponivel": true
+  }
+]

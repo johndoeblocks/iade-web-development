@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nome": "Padre Gino's - Chiado",
+    "morada": "Rua Garrett 25, Lisboa",
+    "telefone": "+351 21 123 4567",
+    "horario": "11:00 - 23:00",
+    "coordenadas": { "lat": 38.7103, "lng": -9.1422 }
+  },
+  {
+    "id": 2,
+    "nome": "Padre Gino's - Ribeira",
+    "morada": "Cais da Ribeira 45, Porto",
+    "telefone": "+351 22 987 6543",
+    "horario": "12:00 - 00:00",
+    "coordenadas": { "lat": 41.1408, "lng": -8.6135 }
+  },
+  {
+    "id": 3,
+    "nome": "Padre Gino's - Marina",
+    "morada": "Marina de Vilamoura 12, Faro",
+    "telefone": "+351 28 555 1234",
+    "horario": "11:30 - 23:30",
+    "coordenadas": { "lat": 37.0748, "lng": -8.1175 }
+  }
+]

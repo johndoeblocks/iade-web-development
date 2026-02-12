@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padre Gino's 🍕 — Lojas</title>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        nav a {
+            padding: 8px 16px;
+            background: #1a1a2e;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        nav a:hover {
+            opacity: 0.85;
+        }
+
+        nav a.active {
+            background: #2ecc71;
+        }
+
+        h1 {
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <a href="/">📋 API</a>
+        <a href="/lojas" class="active">📍 Lojas</a>
+        <a href="/pizzas">🍕 Pizzas</a>
+        <a href="/admin">🛠️ Admin</a>
+    </nav>
+
+    <h1>📍 Lojas</h1>
+    <ul id="stores-list">
+        <li>A carregar...</li>
+    </ul>
+
+    <script>
+        async function loadStores() {
+            try {
+                const res = await fetch('/api/stores');
+                const stores = await res.json();
+                document.getElementById('stores-list').innerHTML = stores
+                    .map(store => `<li><strong>${store.nome}</strong> — ${store.morada} (${store.horario})</li>`)
+                    .join('');
+            } catch (err) {
+                document.getElementById('stores-list').innerHTML = '<li>Erro ao carregar lojas</li>';
+            }
+        }
+        loadStores();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+.lojas {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Hero */
+.lojas__hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.lojas__title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 16px 0;
+}
+
+.lojas__subtitle {
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Geo button */
+.lojas__geo-btn {
+  margin-top: 20px;
+  background: linear-gradient(135deg, #e63946 0%, #c62828 100%);
+  color: white;
+  padding: 14px 36px;
+  border: none;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lojas__geo-btn:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(230, 57, 70, 0.5);
+}
+
+.lojas__geo-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.lojas__geo-error {
+  color: #ff6b6b;
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
+
+/* Store list */
+.lojas__list {
+  padding: 60px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.lojas__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+/* Store card */
+.loja-card {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.loja-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.loja-card--nearest {
+  border: 3px solid #2ecc71;
+  box-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+  transform: translateY(-4px);
+}
+
+.loja-card__badge {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.loja-card__distance {
+  color: #666;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+}
+
+.loja-card__icon {
+  font-size: 2.5rem;
+  margin-bottom: 16px;
+}
+
+.loja-card__nome {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 20px 0;
+}
+
+.loja-card__info {
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.loja-card__row {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.loja-card__row:last-child {
+  border-bottom: none;
+}
+
+.loja-card__label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.loja-card__value {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.loja-card__btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #e63946 0%, #c62828 100%);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.loja-card__btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .lojas__title {
+    font-size: 1.75rem;
+  }
+
+  .lojas__hero {
+    padding: 40px 20px;
+  }
+
+  .lojas__list {
+    padding: 40px 16px;
+  }
+
+  .lojas__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .loja-card {
+    padding: 24px;
+  }
+}
