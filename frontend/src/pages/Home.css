@@ -1,0 +1,146 @@
+.home {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.hero__content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 24px 0;
+  line-height: 1.2;
+}
+
+.hero__title--accent {
+  background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero__subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+}
+
+/* Pizza do Dia */
+.pizza-do-dia {
+  padding: 60px 24px;
+  background: linear-gradient(135deg, #e63946 0%, #c62828 100%);
+}
+
+.pizza-do-dia__container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  color: white;
+}
+
+.pizza-do-dia__badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.pizza-do-dia__nome {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0 0 16px 0;
+}
+
+.pizza-do-dia__descricao {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0 0 24px 0;
+}
+
+.pizza-do-dia__preco {
+  margin-bottom: 24px;
+}
+
+.pizza-do-dia__preco-original {
+  font-size: 1.25rem;
+  text-decoration: line-through;
+  opacity: 0.7;
+  margin-right: 12px;
+}
+
+.pizza-do-dia__preco-atual {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.pizza-do-dia__btn {
+  background: white;
+  color: #e63946;
+  border: none;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pizza-do-dia__btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Menu */
+.menu {
+  padding: 60px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.menu__title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 40px 0;
+}
+
+.menu__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 2rem;
+  }
+  
+  .pizza-do-dia__nome {
+    font-size: 1.75rem;
+  }
+  
+  .menu__grid {
+    grid-template-columns: 1fr;
+  }
+}

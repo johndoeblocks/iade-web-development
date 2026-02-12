@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Padre Gino's 🍕</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* Stats */
+    .stats {
+      max-width: 1000px;
+      margin: -20px auto 0;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stats-grid {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .stat-card .number {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+
+    .stat-card .label {
+      font-size: 0.75rem;
+      color: #888;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    /* Filters */
+    .filters {
+      max-width: 1000px;
+      margin: 24px auto 0;
+      padding: 0 24px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      border: 2px solid #ddd;
+      border-radius: 24px;
+      background: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: capitalize;
+    }
+
+    .filter-btn:hover {
+      border-color: #1a1a2e;
+    }
+
+    .filter-btn.active {
+      background: #1a1a2e;
+      color: white;
+      border-color: #1a1a2e;
+    }
+
+    /* Orders */
+    .orders {
+      max-width: 1000px;
+      margin: 24px auto;
+      padding: 0 24px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #999;
+      font-size: 1.1rem;
+      padding: 40px 0;
+    }
+
+    /* Order card */
+    .order-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      transition: box-shadow 0.2s;
+    }
+
+    .order-card:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .order-id {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #1a1a2e;
+    }
+
+    .order-status {
+      padding: 6px 14px;
+      border-radius: 20px;
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: capitalize;
+    }
+
+    .order-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .order-customer,
+    .order-items,
+    .order-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .order-item {
+      padding-left: 12px;
+      color: #666;
+    }
+
+    .order-total {
+      font-weight: 700;
+      color: #1a1a2e;
+      font-size: 1rem;
+    }
+
+    .order-date {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .order-obs {
+      font-style: italic;
+      color: #888;
+    }
+
+    /* Actions */
+    .order-actions {
+      display: flex;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 24px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+      text-transform: capitalize;
+      background: linear-gradient(135deg, #2ecc71, #27ae60);
+    }
+
+    .action-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+    }
+
+    .action-btn.danger {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+
+    .action-btn.danger:hover:not(:disabled) {
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 1.5rem;
+      }
+
+      .order-body {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        gap: 8px;
+      }
+
+      .stat-card {
+        padding: 12px 14px;
+        min-width: 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="hero">
+    <h1>🛠️ Painel de Administração</h1>
+    <p>Gerir encomendas da Padre Gino's</p>
+  </section>
+
+  <section class="stats">
+    <div class="stats-grid" id="stats-grid">
+      <!-- filled by JS -->
+    </div>
+  </section>
+
+  <section class="filters" id="filters">
+    <!-- filled by JS -->
+  </section>
+
+  <section class="orders" id="orders-list">
+    <p class="empty">A carregar encomendas...</p>
+  </section>
+
+  <script>
+    const API_URL = '/api';
+
+    const VALID_TRANSITIONS = {
+      'PENDENTE': ['EM_PREPARACAO', 'cancelado'],
+      'EM_PREPARACAO': ['a caminho', 'cancelado'],
+      'a caminho': ['ENTREGUE'],
+      'ENTREGUE': [],
+      'cancelado': [],
+    };
+
+    const STATUS_EMOJI = {
+      'PENDENTE': '🕐',
+      'EM_PREPARACAO': '👨‍🍳',
+      'a caminho': '🛵',
+      'ENTREGUE': '✅',
+      'cancelado': '❌',
+    };
+
+    const STATUS_COLORS = {
+      'pendente': '#f39c12',
+      'em preparação': '#3498db',
+      'a caminho': '#9b59b6',
+      'entregue': '#2ecc71',
+      'cancelado': '#e74c3c',
+    };
+
+    let allOrders = [];
+    let currentFilter = 'todos';
+
+    // ─── Fetch orders ───
+    async function fetchOrders() {
+      try {
+        const res = await fetch(`${API_URL}/orders`);
+        if (!res.ok) throw new Error('Erro');
+        allOrders = await res.json();
+        allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        renderStats();
+        renderFilters();
+        renderOrders();
+      } catch (err) {
+        debugger
+        document.getElementById('orders-list').innerHTML =
+          '<p class="empty">Erro ao carregar encomendas</p>';
+      }
+    }
+
+    // ─── Update status ───
+    async function updateStatus(orderId, newStatus) {
+      const btn = document.querySelector(`[data-order="${orderId}"][data-status="${newStatus}"]`);
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ A atualizar...'; }
+
+      try {
+        const res = await fetch(`${API_URL}/orders/${orderId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          alert(data.error || 'Erro ao atualizar');
+          return;
+        }
+
+        await fetchOrders();
+      } catch (err) {
+        alert('Erro ao atualizar status');
+      }
+    }
+
+    // ─── Render stats ───
+    function renderStats() {
+      const counts = {};
+      allOrders.forEach(o => { counts[o.status] = (counts[o.status] || 0) + 1; });
+
+      let html = `
+        <div class="stat-card">
+          <span class="number">${allOrders.length}</span>
+          <span class="label">Total</span>
+        </div>
+      `;
+
+      for (const [status, emoji] of Object.entries(STATUS_EMOJI)) {
+        html += `
+          <div class="stat-card">
+            <span class="number">${counts[status] || 0}</span>
+            <span class="label">${emoji} ${status}</span>
+          </div>
+        `;
+      }
+
+      document.getElementById('stats-grid').innerHTML = html;
+    }
+
+    // ─── Render filters ───
+    function renderFilters() {
+      const counts = {};
+      allOrders.forEach(o => { counts[o.status] = (counts[o.status] || 0) + 1; });
+
+      let html = `
+        <button class="filter-btn ${currentFilter === 'todos' ? 'active' : ''}"
+                onclick="setFilter('todos')">
+          Todos (${allOrders.length})
+        </button>
+      `;
+
+      for (const [status, emoji] of Object.entries(STATUS_EMOJI)) {
+        html += `
+          <button class="filter-btn ${currentFilter === status ? 'active' : ''}"
+                  onclick="setFilter('${status}')">
+            ${emoji} ${status} (${counts[status] || 0})
+          </button>
+        `;
+      }
+
+      document.getElementById('filters').innerHTML = html;
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      renderFilters();
+      renderOrders();
+    }
+
+    // ─── Render orders ───
+    function renderOrders() {
+      const filtered = currentFilter === 'todos'
+        ? allOrders
+        : allOrders.filter(o => o.status === currentFilter);
+
+      if (filtered.length === 0) {
+        document.getElementById('orders-list').innerHTML =
+          '<p class="empty">Nenhuma encomenda encontrada</p>';
+        return;
+      }
+
+      let html = '';
+      for (const order of filtered) {
+        const emoji = STATUS_EMOJI[order.status] || '';
+        const color = STATUS_COLORS[order.status] || '#999';
+        const transitions = VALID_TRANSITIONS[order.status] || [];
+
+        const itemsHtml = order.items?.map(item =>
+          `<span class="order-item">${item.quantidade}x ${item.pizza.nome} — €${(item.preco * item.quantidade).toFixed(2)}</span>`
+        ).join('');
+
+        const actionsHtml = transitions.length > 0
+          ? `<div class="order-actions">
+              ${transitions.map(next =>
+            `<button class="action-btn ${next === 'cancelado' ? 'danger' : ''}"
+                         data-order="${order.id}" data-status="${next}"
+                         onclick="updateStatus(${order.id}, '${next}')">
+                  ${STATUS_EMOJI[next]} ${next}
+                </button>`
+          ).join('')}
+            </div>`
+          : '';
+
+        html += `
+          <div class="order-card">
+            <div class="order-header">
+              <div class="order-id">#${order.id}</div>
+              <div class="order-status" style="background-color: ${color}">
+                ${emoji} ${order.status}
+              </div>
+            </div>
+            <div class="order-body">
+              <div class="order-customer">
+                <strong>👤 ${order.nome}</strong>
+                <span>📞 ${order.telefone}</span>
+                <span>📍 ${order.morada}</span>
+              </div>
+              <div class="order-items">
+                <strong>Itens:</strong>
+                ${itemsHtml}
+              </div>
+              <div class="order-meta">
+                <span class="order-total">💰 Total: €${order.total.toFixed(2)}</span>
+                <span class="order-date">📅 ${new Date(order.createdAt).toLocaleString('pt-PT')}</span>
+                ${order.observacoes ? `<span class="order-obs">📝 ${order.observacoes}</span>` : ''}
+              </div>
+            </div>
+            ${actionsHtml}
+          </div>
+        `;
+      }
+
+      document.getElementById('orders-list').innerHTML = html;
+    }
+
+    // ─── Init ───
+    fetchOrders();
+    // Auto-refresh every 5 seconds
+    setInterval(fetchOrders, 5000);
+  </script>
+
+</body>
+
+</html>
