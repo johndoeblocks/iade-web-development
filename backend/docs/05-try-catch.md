@@ -2,6 +2,7 @@
 
 ## 🎯 Objetivos
 - Entender erros em JavaScript
+- Saber como analisar e corrigir erros
 - Usar try/catch corretamente
 - Criar error handlers em Express
 - Boas práticas de error handling

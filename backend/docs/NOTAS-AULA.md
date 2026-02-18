@@ -576,9 +576,8 @@ await fetch(`/api/orders/${orderId}/status`, {
 
 ### Perguntas guia para Q&A (2:55 – 3:00)
 1. "Qual foi a parte mais difícil de entender?"
-2. "Porque é que async/await é melhor que callbacks?"
-3. "Que problemas tem o JSON como base de dados?"
-4. "Quando usariam HTML servido pelo Express vs React?"
+2. "Que problemas tem o JSON como base de dados?"
+3. "Quando usariam HTML servido pelo Express vs React?"
 
 ### Próximos passos para os alunos
 - Testar todas as rotas com curl ou browser

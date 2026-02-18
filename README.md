@@ -16,7 +16,7 @@
 
 � [Ver estrutura completa do projeto](estrutura.md)
 
-## 🎯 Funcionalidades do MVP
+## 🎯 Funcionalidades do Prototipo
 
 - ✅ Ver lojas e localizações
 - ✅ Ver menu de pizzas

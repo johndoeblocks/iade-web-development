@@ -17,8 +17,8 @@
   "author": "IADE Web Development",
   "license": "MIT",
   "dependencies": {
-    "express": "^5.2.1",
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "express": "^5.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
