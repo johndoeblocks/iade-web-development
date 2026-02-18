@@ -1,5 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
+
 import cors from 'cors';
+
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -62,6 +64,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err.message);
   res.status(500).json({ error: 'Erro interno do servidor' });
 });
+
+
 
 // Start server
 app.listen(PORT, () => {
