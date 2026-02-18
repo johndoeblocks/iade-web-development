@@ -15,7 +15,7 @@ console.log('Memória:', os.totalmem() / 1024 / 1024 / 1024, 'GB');
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Ola da Padre Gino\'s! 🍕');
+  res.end('Ola da Padre Gino');
 });
 
 server.listen(3000, () => {

@@ -182,12 +182,19 @@ Request → Middleware 1 → Middleware 2 → Route Handler → Response
 ```
 backend/
 ├── src/
-│   ├── index.js        # Entry point
+│   ├── index.js          # Entry point
 │   ├── routes/
 │   │   ├── pizzas.js
-│   │   └── stores.js
-│   └── data/
-│       └── pizzas.json
+│   │   ├── stores.js
+│   │   └── orders.js
+│   ├── data/
+│   │   ├── pizzas.json
+│   │   ├── stores.json
+│   │   └── orders.json
+│   └── public/
+│       ├── admin.html
+│       ├── lojas.html
+│       └── pizzas.html
 ├── package.json
 └── .gitignore
 ```

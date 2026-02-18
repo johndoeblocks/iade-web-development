@@ -2,7 +2,7 @@
 
 **IADE Web Development Course**
 
-> Construir um MVP de um e-commerce, passo a passo, usando uma pizzaria como exemplo
+> Construir um prototipo funcional de um e-commerce, passo a passo, usando uma pizzaria como exemplo
 
 ## 📚 Estrutura do Curso
 
@@ -33,7 +33,7 @@
 **Deploy:** Railway para termos deploys automaticos
 
 - URL Frontend: https://resplendent-insight-production-fec0.up.railway.app/
-- URL Backend: https://api-padre-gino-production-838d.up.railway.app/
+- URL Backend: https://iade-web-development-production.up.railway.app/
 
 ## 🚀 Quick Start
 

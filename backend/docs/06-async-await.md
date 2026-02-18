@@ -1,4 +1,4 @@
-# 08 - Async/Await
+# 06 - Async/Await
 
 ## 🎯 Objetivos
 - Escrever código assíncrono que parece síncrono

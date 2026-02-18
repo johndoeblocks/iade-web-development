@@ -1,6 +1,6 @@
 # 📋 Notas de Aula — Backend Web Development (3h)
 
-> Guia de condução para uma aula de 3 horas cobrindo Node.js, Express, JavaScript assíncrono e Prisma.
+> Guia de condução para uma aula de 3 horas cobrindo Node.js, Express, JavaScript assíncrono, filesystem JSON e servir HTML.
 > Cada bloco indica o **tempo previsto**, os **tópicos** e **exemplos do mundo real** para usar.
 
 ---
@@ -13,9 +13,9 @@
 | 2 | 0:25 – 0:55 | Express + Rotas HTTP | 03, 04 |
 | 3 | 0:55 – 1:10 | Try/Catch em Express | 05 |
 | ☕ | 1:10 – 1:20 | **Intervalo** | — |
-| 4 | 1:20 – 1:50 | Callbacks → Promises → Async/Await | 06, 07, 08 |
-| 5 | 1:50 – 2:15 | Filesystem + JSON como DB | 09 |
-| 6 | 2:15 – 2:50 | Prisma + PostgreSQL | 10 |
+| 4 | 1:20 – 1:50 | Async/Await | 06 |
+| 5 | 1:50 – 2:25 | Filesystem + JSON como DB | 07 |
+| 6 | 2:25 – 2:50 | Servir HTML pelo Express | 08 |
 | 7 | 2:50 – 3:00 | Wrap-up + Q&A | — |
 
 ---
@@ -26,6 +26,7 @@
 
 - **Abrir com a pergunta**: "Todos já usaram JavaScript no browser. E se pudéssemos correr JS no servidor?"
 - Mostrar que Node.js é um **runtime** — não é uma linguagem nova
+- É **single-threaded** mas **não-bloqueante** (event loop)
 - Mencionar empresas: **Netflix** migrou de Java para Node e reduziu o startup time de 40 min para 1 min. **LinkedIn** reduziu servidores de 30 para 3 ao migrar de Ruby para Node.
 
 #### 🌍 Exemplo do mundo real
@@ -42,11 +43,32 @@ console.log('Versão:', process.version);
 console.log('Plataforma:', process.platform);
 ```
 
+#### Mencionar módulos nativos
+```javascript
+import { readFile, writeFile } from 'fs/promises';  // Ficheiros
+import { join, dirname } from 'path';                // Paths
+import http from 'http';                              // HTTP
+```
+
+#### Servidor HTTP básico (mostrar brevemente)
+```javascript
+import http from 'http';
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Olá da Padre Gino\'s! 🍕');
+});
+
+server.listen(3000, () => console.log('Servidor em http://localhost:3000'));
+```
+> 💡 "Isto funciona, mas é verboso. Já vamos ver como o Express simplifica tudo."
+
 ### O que dizer (0:10 – 0:25) — npm
 
 - npm = "app store" para programadores JavaScript
 - **package.json** é o bilhete de identidade do projeto
 - Explicar `dependencies` vs `devDependencies` — "express precisa estar em produção, nodemon só em dev"
+- `"type": "module"` — para usar `import/export` em vez de `require`
 - Semver: `^4.18.2` — o `^` significa "aceito updates menores"
 
 #### 🌍 Exemplo do mundo real
@@ -55,11 +77,21 @@ console.log('Plataforma:', process.platform);
 #### Demo ao vivo
 ```bash
 npm init -y
-npm install express
+npm install express cors
 npm install --save-dev nodemon
 ```
 - Mostrar o `node_modules/` — "nunca fazemos commit disto"
 - Mostrar `.gitignore` com `node_modules/`
+- Mostrar os scripts no `package.json`:
+```json
+{
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  }
+}
+```
+- `npm run dev` → nodemon reinicia o servidor automaticamente quando há alterações
 
 ---
 
@@ -78,15 +110,19 @@ npm install --save-dev nodemon
 #### Demo ao vivo
 ```javascript
 import express from 'express';
+import cors from 'cors';
+
 const app = express();
+
+// Middleware (executam em ORDEM)
+app.use(cors());           // 1. Permite cross-origin
+app.use(express.json());   // 2. Para ler JSON no body
 
 // Middleware de logging — mostra cada pedido
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
 });
-
-app.use(express.json()); // Para ler JSON no body
 
 app.get('/', (req, res) => {
   res.json({ message: 'Bem-vindo à API! 🍕' });
@@ -95,11 +131,24 @@ app.get('/', (req, res) => {
 app.listen(3001, () => console.log('Servidor na porta 3001'));
 ```
 
+#### Explicar Request e Response
+```javascript
+app.get('/pizzas/:id', (req, res) => {
+  req.params.id      // Parâmetros da URL (:id)
+  req.query.sort     // Query string (?sort=name)
+  req.body           // Body do POST/PATCH
+  req.method         // 'GET', 'POST', etc.
+
+  res.json({...})             // Enviar JSON
+  res.status(201).json({...}) // Com status code
+  res.status(404).json({...}) // Não encontrado
+});
+```
+
 ### O que dizer (0:40 – 0:55) — Rotas e Métodos HTTP
 
 - REST = forma padronizada de organizar APIs
 - Tabela dos métodos: GET, POST, PUT, PATCH, DELETE
-- `req.params` vs `req.query` vs `req.body` — "três sítios diferentes para enviar dados"
 
 #### 🌍 Exemplo do mundo real
 > Quando vocês fazem uma encomenda no Uber Eats:
@@ -115,14 +164,34 @@ app.listen(3001, () => console.log('Servidor na porta 3001'));
 import express from 'express';
 const router = express.Router();
 
+// GET /api/pizzas
 router.get('/', (req, res) => { /* listar */ });
-router.get('/:id', (req, res) => { /* obter uma */ });
-router.post('/', (req, res) => { /* criar */ });
+
+// GET /api/pizzas/:id
+router.get('/:id', (req, res) => {
+  const pizza = pizzas.find(p => p.id === parseInt(req.params.id));
+  if (!pizza) return res.status(404).json({ error: 'Não encontrada' });
+  res.json(pizza);
+});
+
+// POST /api/pizzas
+router.post('/', (req, res) => {
+  const { nome, preco } = req.body;
+  if (!nome || !preco) return res.status(400).json({ error: 'Dados inválidos' });
+  // criar...
+  res.status(201).json(nova);
+});
 
 export default router;
+```
 
-// index.js — registar
+```javascript
+// index.js — registar rotas
+import pizzasRouter from './routes/pizzas.js';
+import storesRouter from './routes/stores.js';
+
 app.use('/api/pizzas', pizzasRouter);
+app.use('/api/stores', storesRouter);
 ```
 
 **Testar com curl:**
@@ -168,7 +237,26 @@ router.get('/:id', async (req, res) => {
 });
 ```
 
-- Mostrar **error handler global** no `index.js` — o último recurso
+#### Error handler global (no final do index.js)
+```javascript
+// 404 — rota não encontrada
+app.use((req, res) => {
+  res.status(404).json({ error: 'Endpoint não encontrado' });
+});
+
+// Error handler — erros gerais
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  res.status(500).json({ error: 'Erro interno do servidor' });
+});
+```
+
+#### Dica de produção
+```javascript
+// Nunca expor stack traces ao utilizador
+res.status(500).json({ error: 'Erro interno' }); // ✅
+res.status(500).json({ error: err.stack });       // ❌ Nunca!
+```
 
 ---
 
@@ -176,72 +264,14 @@ router.get('/:id', async (req, res) => {
 
 ---
 
-## 🔵 Bloco 4 — Callbacks → Promises → Async/Await (30 min)
+## 🔵 Bloco 4 — Async/Await (30 min)
 
-> **Narrativa**: Este bloco conta a **história da evolução** do JavaScript assíncrono. Mostrar a progressão de callback → promise → async/await no mesmo exemplo.
+### O que dizer (1:20 – 1:35) — Promises e Async/Await
 
-### O que dizer (1:20 – 1:28) — Callbacks
-
-- Callback = "liga-me quando terminares"
-- Node usa callbacks para tudo: ler ficheiros, fazer HTTP requests, etc.
-- Padrão **error-first**: `callback(error, resultado)`
-- Mostrar o **callback hell** — indentação infinita
-
-#### 🌍 Exemplo do mundo real
-> Pedir pizza por telefone com callbacks: "Liga para a pizzaria e quando atenderem, faz o pedido, e quando o pedido estiver pronto, diz ao estafeta para entregar, e quando entregar, avisa o cliente…" — cada passo depende do anterior e o código fica ilegível.
-
-#### Demo: Callback Hell
-```javascript
-readFile('pizzas.json', 'utf-8', (err, pizzas) => {
-  if (err) return console.error(err);
-  readFile('stores.json', 'utf-8', (err, stores) => {
-    if (err) return console.error(err);
-    readFile('orders.json', 'utf-8', (err, orders) => {
-      if (err) return console.error(err);
-      // 🔺 Pirâmide da morte!
-      console.log('Tudo carregado!');
-    });
-  });
-});
-```
-
-### O que dizer (1:28 – 1:38) — Promises
-
-- Promise = "promessa de resultado futuro"
-- 3 estados: **pending**, **fulfilled**, **rejected**
-- `.then()` para sucesso, `.catch()` para erro
-- **Encadeamento** — cada `.then()` retorna nova Promise (permite "aplanar" o código)
-
-#### 🌍 Exemplo do mundo real
-> Uma Promise é como uma senha de atendimento numa loja: recebes a senha (Promise pending), podes fazer outras coisas enquanto esperas, e quando chamam o teu número ou a senha é fulfilled (recebes o produto) ou rejected (já não há stock).
-
-#### Demo: Evolução de callback para Promise
-```javascript
-// O mesmo código, mas plano — sem pirâmide
-import { readFile } from 'fs/promises'; // versão Promise!
-
-readFile('pizzas.json', 'utf-8')
-  .then(data => JSON.parse(data))
-  .then(pizzas => console.log('Pizzas:', pizzas.length))
-  .catch(err => console.error('Erro:', err));
-
-// Promise.all — carregar tudo em paralelo!
-Promise.all([
-  readFile('pizzas.json', 'utf-8'),
-  readFile('stores.json', 'utf-8'),
-])
-.then(([pizzasData, storesData]) => {
-  console.log('Pizzas:', JSON.parse(pizzasData).length);
-  console.log('Stores:', JSON.parse(storesData).length);
-});
-```
-
-### O que dizer (1:38 – 1:50) — Async/Await
-
-- **Syntax sugar** sobre Promises — "escreve assíncrono como se fosse síncrono"
+- **Conceito**: JavaScript é assíncrono — operações como ler ficheiros ou fazer HTTP requests não bloqueiam
+- Promise = "promessa de resultado futuro" — 3 estados: **pending**, **fulfilled**, **rejected**
+- **Async/Await** = syntax sugar sobre Promises — "escreve assíncrono como se fosse síncrono"
 - `async` marca a função, `await` pausa até resolver
-- **try/catch funciona naturalmente** com async/await
-- Erro comum: esquecer `await` — retorna Promise em vez do valor
 
 #### 🌍 Exemplo do mundo real
 > Comprar algo online com async/await:
@@ -252,67 +282,164 @@ Promise.all([
 > ```
 > Cada passo espera pelo anterior, mas o código lê-se como uma receita!
 
-#### Demo: O mesmo exemplo, agora em async/await
+#### Demo: Evolução de Promises para Async/Await
 ```javascript
-async function carregarDados() {
+// Com Promises — funcional mas verboso
+fetch('/api/pizzas')
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
+// Com Async/Await — limpo!
+async function getPizzas() {
   try {
-    const pizzasData = await readFile('pizzas.json', 'utf-8');
-    const storesData = await readFile('stores.json', 'utf-8');
-    
-    const pizzas = JSON.parse(pizzasData);
-    const stores = JSON.parse(storesData);
-    
-    console.log('Pizzas:', pizzas.length);
-    console.log('Lojas:', stores.length);
-  } catch (error) {
-    console.error('Erro:', error.message);
+    const response = await fetch('/api/pizzas');
+    const data = await response.json();
+    console.log(data);
+  } catch (err) {
+    console.error(err);
   }
 }
 ```
 
-**Mostrar a evolução lado a lado:**
+### O que dizer (1:35 – 1:50) — Paralelo e uso em Express
+
+#### Promise.all — carregar dados em paralelo
+```javascript
+// Sequencial (lento) — espera um acabar antes de começar o outro
+const pizzas = await getPizzas();     // 200ms
+const stores = await getStores();     // 200ms
+// Total: ~400ms
+
+// Paralelo (rápido) — todos ao mesmo tempo!
+const [pizzas, stores] = await Promise.all([
+  getPizzas(),    // 200ms ─┐
+  getStores(),    // 200ms ─┤ ao mesmo tempo
+]);
+// Total: ~200ms
 ```
-Callback:     readFile(path, cb)        → indentação profunda, error-first
-Promise:      readFile(path).then()     → plano, mas muitos .then()
-Async/Await:  await readFile(path)      → limpo como código síncrono
+
+#### Async/Await em Express
+```javascript
+router.get('/', async (req, res) => {
+  try {
+    const pizzas = await getPizzas();
+    res.json(pizzas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+```
+
+#### Erros comuns
+```javascript
+// ❌ Esqueceu o await — retorna Promise, não o valor!
+const data = fetch('/api/pizzas');
+
+// ✅ Com await — retorna o valor
+const data = await fetch('/api/pizzas');
+
+// ❌ await fora de função async
+const data = await fetch('/api');
+
+// ✅ Dentro de função async
+async function getData() {
+  const data = await fetch('/api');
+}
 ```
 
 ---
 
-## 🟣 Bloco 5 — Filesystem + JSON como DB (25 min)
+## 🟣 Bloco 5 — Filesystem + JSON como DB (35 min)
 
-### O que dizer (1:50 – 2:15)
+### O que dizer (1:50 – 2:00) — Introdução
 
 - "Agora que sabemos async/await, vamos usá-lo para ler/escrever dados"
 - `fs/promises` — módulo nativo para ficheiros
 - JSON como base de dados: **bom para aprender, mau para produção**
-- Implementar CRUD completo: Read, Create, Update, Delete
 
 #### 🌍 Exemplo do mundo real
 > Muitos protótipos e MVPs começam com JSON ficheiros — a primeira versão do Twitter guardava dados de forma simples. Mas quando tens 1000 utilizadores a fazer pedidos ao mesmo tempo, dois pedidos podem escrever no ficheiro ao mesmo tempo e corrompem-se mutuamente. É como ter um caderno de encomendas com só uma caneta para 10 empregados.
 
-#### Demo ao vivo — CRUD de Pizzas com JSON
+### O que dizer (2:00 – 2:15) — Ler e Escrever Ficheiros
+
+#### Demo ao vivo — Ler e escrever
 ```javascript
 import { readFile, writeFile } from 'fs/promises';
 
-// READ
+// LER ficheiro JSON
 async function getPizzas() {
-  const data = await readFile('data/pizzas.json', 'utf-8');
+  const data = await readFile('src/data/pizzas.json', 'utf-8');
   return JSON.parse(data);
 }
 
-// CREATE
+// ESCREVER ficheiro JSON
+async function savePizzas(pizzas) {
+  const data = JSON.stringify(pizzas, null, 2);  // Pretty print com 2 espaços
+  await writeFile('src/data/pizzas.json', data);
+}
+```
+
+### O que dizer (2:15 – 2:25) — CRUD completo e rotas
+
+#### Demo — CRUD completo
+```javascript
+// CREATE — criar nova pizza
 async function createPizza(pizzaData) {
   const pizzas = await getPizzas();
-  const newPizza = { id: pizzas.length + 1, ...pizzaData };
+  const newPizza = {
+    id: Math.max(...pizzas.map(p => p.id)) + 1,  // Gerar ID
+    ...pizzaData
+  };
   pizzas.push(newPizza);
-  await writeFile('data/pizzas.json', JSON.stringify(pizzas, null, 2));
+  await savePizzas(pizzas);
   return newPizza;
+}
+
+// UPDATE — atualizar pizza
+async function updatePizza(id, updates) {
+  const pizzas = await getPizzas();
+  const index = pizzas.findIndex(p => p.id === id);
+  if (index === -1) return null;
+  pizzas[index] = { ...pizzas[index], ...updates };
+  await savePizzas(pizzas);
+  return pizzas[index];
+}
+
+// DELETE — apagar pizza
+async function deletePizza(id) {
+  const pizzas = await getPizzas();
+  const filtered = pizzas.filter(p => p.id !== id);
+  if (filtered.length === pizzas.length) return false;
+  await savePizzas(filtered);
+  return true;
 }
 ```
 
 #### Mostrar as rotas reais do projeto
 - Abrir `src/routes/pizzas.js`, `stores.js`, `orders.js`
+
+```javascript
+// routes/pizzas.js
+router.get('/', async (req, res) => {
+  try {
+    const pizzas = await getPizzas();
+    res.json(pizzas);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao carregar pizzas' });
+  }
+});
+
+router.post('/', async (req, res) => {
+  try {
+    const pizza = await createPizza(req.body);
+    res.status(201).json(pizza);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar pizza' });
+  }
+});
+```
+
 - Demonstrar com curl
 - **Perguntar à turma**: "Que problemas vêem nesta abordagem?"
 
@@ -324,109 +451,113 @@ async function createPizza(pizzaData) {
 | Poucos dados | Acessos concorrentes |
 | 1 utilizador | Muitos utilizadores |
 
-> **Transição**: "Então como é que empresas reais guardam dados? Com bases de dados! E para não escrever SQL à mão, usamos um ORM."
-
 ---
 
-## 🟠 Bloco 6 — Prisma + PostgreSQL (35 min)
+## 🟠 Bloco 6 — Servir HTML pelo Express (25 min)
 
-### O que dizer (2:15 – 2:25) — O que é um ORM
+### O que dizer (2:25 – 2:35) — Static files e sendFile
 
-- ORM = Object-Relational Mapping — "fala com a base de dados em JavaScript"
-- Comparar SQL direto vs Prisma:
-  ```
-  SQL:    SELECT * FROM pizzas WHERE categoria = 'classicas'
-  Prisma: prisma.pizza.findMany({ where: { categoria: 'classicas' } })
-  ```
-- Vantagens: type-safety, autocompletar, migrations automáticas
+- "Até agora o backend só devolve JSON. Mas o Express também pode servir **páginas HTML**."
+- `express.static('public')` — serve todos os ficheiros da pasta `public/` automaticamente
+- `res.sendFile()` — serve um ficheiro HTML numa rota específica (URL limpa)
 
-#### 🌍 Exemplo do mundo real
-> O Prisma é usado por empresas como a **Mercedes-Benz**, **AT&T**, e **BBC**. Sem ORM, cada query SQL é uma string que pode ter erros de sintaxe que só descobres em runtime. Com Prisma, se escreveres `prisma.pizza.findManu()` o editor sublinha a vermelho — erros antes de correr!
-
-### O que dizer (2:25 – 2:35) — Setup e Schema
-
-#### Demo ao vivo
-```bash
-npm install prisma --save-dev
-npm install @prisma/client
-npx prisma init
+#### Estrutura do projeto
+```
+src/
+├── index.js
+├── public/          ← Pasta dos ficheiros estáticos
+│   ├── admin.html   ← Painel de administração
+│   ├── lojas.html   ← Lista de lojas
+│   └── pizzas.html  ← Lista de pizzas
+└── routes/
 ```
 
-- Mostrar o `schema.prisma` — "é como um contrato da base de dados"
-- Explicar cada model: Pizza, Store, Order, OrderItem
-- Mostrar **relações**: Order tem muitos OrderItem, OrderItem aponta para Pizza
-
-```prisma
-model Pizza {
-  id          Int      @id @default(autoincrement())
-  nome        String
-  descricao   String?   // ? = opcional
-  preco       Float
-  categoria   String   @default("classicas")
-  disponivel  Boolean  @default(true)
-}
-```
-
-```bash
-npx prisma migrate dev --name init
-npx prisma studio  # Interface visual — WOW moment!
-```
-
-### O que dizer (2:35 – 2:50) — Queries e Rotas com Prisma
-
-- Mostrar a **mesma API** mas agora com Prisma
-- "Substituímos `readFile` + `JSON.parse` por `prisma.pizza.findMany()`"
-- Nested creates para orders com items
-
-#### Demo — Comparação lado a lado
-
+#### Demo ao vivo — Setup no index.js
 ```javascript
-// ❌ ANTES — fs/JSON
-async function getPizzas() {
-  const data = await readFile('pizzas.json', 'utf-8');
-  return JSON.parse(data);
-}
+// Serve tudo o que está na pasta 'public'
+app.use(express.static(join(__dirname, 'public')));
 
-// ✅ DEPOIS — Prisma  
-async function getPizzas() {
-  return await prisma.pizza.findMany();
-}
-```
+// Rotas com URLs limpas
+app.get('/admin', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'admin.html'));
+});
 
-```javascript
-// Rota com Prisma — mais limpo!
-router.get('/', async (req, res) => {
-  try {
-    const { categoria } = req.query;
-    const pizzas = await prisma.pizza.findMany({
-      where: categoria ? { categoria } : undefined,
-    });
-    res.json(pizzas);
-  } catch (error) {
-    res.status(500).json({ error: 'Erro ao carregar pizzas' });
-  }
+app.get('/lojas', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'lojas.html'));
+});
+
+app.get('/pizzas', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'pizzas.html'));
 });
 ```
 
+> **Resultado:** `/lojas` serve `lojas.html`, `/pizzas` serve `pizzas.html`, `/admin` serve `admin.html`
+
+### O que dizer (2:35 – 2:50) — Fetch dentro do HTML
+
+- As páginas HTML usam `fetch()` para pedir dados à API **do mesmo servidor**
+- Como estão no mesmo servidor, usamos URLs relativos: `/api/stores` em vez de `http://localhost:3001/api/stores`
+
+#### Demo — lojas.html (o exemplo mais simples)
+```html
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Padre Gino's — Lojas</title>
+</head>
+<body>
+    <h1>📍 Lojas</h1>
+    <ul id="stores-list">
+        <li>A carregar...</li>
+    </ul>
+
+    <script>
+        async function loadStores() {
+            try {
+                const res = await fetch('/api/stores');
+                const stores = await res.json();
+
+                document.getElementById('stores-list').innerHTML = stores
+                    .map(store => `<li><strong>${store.nome}</strong> — ${store.morada}</li>`)
+                    .join('');
+            } catch (err) {
+                document.getElementById('stores-list').innerHTML = '<li>Erro ao carregar</li>';
+            }
+        }
+        loadStores();
+    </script>
+</body>
+</html>
+```
+
+#### Explicar o padrão (sempre o mesmo!)
+1. **`fetch('/api/...')`** — pedir dados à API
+2. **`.json()`** — converter a resposta para objeto JavaScript
+3. **`.map()`** — transformar cada item em HTML
+4. **`innerHTML`** — colocar o HTML na página
+
+#### Admin vai mais longe — também escreve dados
 ```javascript
-// Criar encomenda com items (nested create — poder do Prisma!)
-const order = await prisma.order.create({
-  data: {
-    nome: 'João',
-    telefone: '912345678',
-    morada: 'Rua das Flores 10',
-    total: 17.00,
-    items: {
-      create: [
-        { pizzaId: 1, quantidade: 2, precoUnit: 8.50 }
-      ]
-    }
-  },
-  include: { items: true }
+// Ler encomendas (GET)
+const res = await fetch('/api/orders');
+const orders = await res.json();
+
+// Atualizar status (PATCH)
+await fetch(`/api/orders/${orderId}/status`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: 'em preparação' }),
 });
 ```
 
-**Testar com Prisma Studio** — mostrar dados a aparecer na interface.
+#### JSON vs HTML — quando usar cada um?
+| Rota | Resposta | Para quem? |
+|------|----------|------------|
+| `/api/pizzas` | JSON | Para o frontend React consumir |
+| `/pizzas` | HTML | Para ver diretamente no browser |
+| `/api/orders` | JSON | Para o frontend React consumir |
+| `/admin` | HTML | Para o administrador gerir encomendas |
 
 ---
 
@@ -438,22 +569,22 @@ const order = await prisma.order.create({
 🧱 Fundação     │  Node.js + npm
 🚀 Framework    │  Express + Middleware + Rotas
 🛡️ Segurança   │  Try/Catch + Error Handling
-⚡ Assíncrono   │  Callbacks → Promises → Async/Await
-📁 Dados v1     │  Filesystem + JSON (protótipo)
-🗄️ Dados v2     │  Prisma + PostgreSQL (produção)
+⚡ Assíncrono   │  Promises → Async/Await
+📁 Dados        │  Filesystem + JSON (protótipo)
+🌐 HTML         │  Servir páginas pelo Express (lojas, pizzas, admin)
 ```
 
 ### Perguntas guia para Q&A (2:55 – 3:00)
 1. "Qual foi a parte mais difícil de entender?"
 2. "Porque é que async/await é melhor que callbacks?"
-3. "Quando usariam JSON vs Prisma?"
-4. "O que fariam diferente na API da Padre Gino's?"
+3. "Que problemas tem o JSON como base de dados?"
+4. "Quando usariam HTML servido pelo Express vs React?"
 
 ### Próximos passos para os alunos
-- Completar os exercícios dos docs 01-10
-- Migrar as rotas do projeto de JSON para Prisma
-- Experimentar `npx prisma studio`
-- Adicionar PUT e DELETE às rotas
+- Testar todas as rotas com curl ou browser
+- Visitar `/lojas`, `/pizzas` e `/admin` no browser
+- Adicionar novas features à API (ex: filtrar pizzas por categoria)
+- Melhorar as páginas HTML com mais CSS
 
 ---
 
@@ -462,5 +593,5 @@ const order = await prisma.order.create({
 1. **Escrever código ao vivo** — errar propositadamente e corrigir mostra o processo real
 2. **Perguntar à turma** antes de mostrar cada conceito — "o que acham que acontece se…?"
 3. **Usar o terminal** — correr curl para testar cada endpoint em tempo real
-4. **Manter o browser** com a documentação do Express/Prisma aberta
+4. **Manter o browser** aberto para mostrar as páginas HTML (lojas, pizzas, admin)
 5. **Usar analogias da pizzaria** consistentemente — os alunos vão associar conceitos à Padre Gino's
