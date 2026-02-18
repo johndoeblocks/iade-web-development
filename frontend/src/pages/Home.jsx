@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 import Pizza from '../components/Pizza';
 import './Home.css';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Home page - Fetches pizzas from the backend API

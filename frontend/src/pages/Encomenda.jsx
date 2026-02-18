@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './Encomenda.css';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const STATUS_STEPS = [
   { key: 'pendente', emoji: '🕐', label: 'Pendente' },

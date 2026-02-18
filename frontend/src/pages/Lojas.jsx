@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Lojas.css';
 
-const API_URL = 'http://localhost:3001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Haversine formula — calculates distance in km between two lat/lng points
