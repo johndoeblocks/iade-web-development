@@ -245,7 +245,7 @@ export default router;
 
 ## ➡️ Próximo Passo
 
-Na próxima aula vamos usar **Prisma + PostgreSQL** para uma base de dados real!
+Aprender a usar uma base de dados com Prisma + PostgresSQL
 
 ---
 

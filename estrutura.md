@@ -57,15 +57,6 @@ iade-web-development/
 │   ├── package-lock.json              # 🔒 Versões exatas das dependências
 │   ├── .env                           # 🔑 Variáveis de ambiente (DATABASE_URL, etc.)
 │   ├── .gitignore                     # 🚫 Ficheiros ignorados (node_modules, .env)
-│   ├── prisma.config.ts               # ⚙️ Configuração do Prisma ORM
-│   │
-│   ├── prisma/                        # 🗄️ PRISMA ORM (Base de Dados)
-│   │   ├── schema.prisma              #    Schema da BD (modelos Pizza, Store, Order)
-│   │   └── migrations/               #    Histórico de alterações à BD
-│   │       ├── migration_lock.toml    #    Lock do provider (PostgreSQL)
-│   │       └── 20260211.../           #    Migração inicial com os modelos
-│   │
-│   ├── generated/                     #    🤖 Código gerado automaticamente (Prisma Client)
 │   │
 │   ├── docs/                          # 📖 DOCUMENTAÇÃO DO BACKEND (10 aulas)
 │   │   ├── 01-nodejs-intro.md         #    O que é Node.js e como funciona
@@ -75,13 +66,10 @@ iade-web-development/
 │   │   ├── 05-try-catch.md            #    Tratamento de erros (try/catch)
 │   │   ├── 06-async-await.md          #    Programação assíncrona (async/await)
 │   │   ├── 07-filesystem-json.md      #    Ler/escrever ficheiros JSON (fs)
-│   │   ├── 08-prisma-postgres.md      #    Prisma ORM + PostgreSQL
 │   │   ├── 09-serving-html.md         #    Servir ficheiros HTML estáticos
 │   │
 │   └── src/                           # 💻 CÓDIGO FONTE DO BACKEND
-│       ├── index.ts                   #    Ponto de entrada - configura Express
-│       ├── prisma.ts                  #    Instância do Prisma Client
-│       ├── seed-pizzas-and-stores.ts  #    Script para popular a BD com dados iniciais
+│       ├── index.js                   #    Ponto de entrada - configura Express
 │       │
 │       ├── 01-intro/                  #    📚 Exercícios introdutórios
 │       │   ├── hello.js               #    Primeiro script Node.js
@@ -112,14 +100,12 @@ iade-web-development/
 
 ## 📝 Explicação da Estrutura
 
-| Pasta | Descrição |
-|-------|-----------|
-| `frontend/` | Aplicação **React** criada com **Vite**. Contém toda a interface que o utilizador vê no browser. |
-| `frontend/docs/` | **12 aulas** progressivas que ensinam React desde o zero — JSX, componentes, hooks, formulários, Context API. |
-| `frontend/src/` | Código fonte organizado em **componentes** (peças reutilizáveis), **páginas** (ecrãs da app), **context** (estado global como o carrinho), e **data** (dados locais). |
-| `backend/` | Servidor **Node.js + Express** que fornece a API REST. Suporta duas abordagens: ficheiros JSON simples e **Prisma + PostgreSQL**. |
-| `backend/docs/` | **10 aulas** que ensinam Node.js, Express, async/await, ficheiros JSON, e Prisma ORM. |
-| `backend/src/routes/` | Rotas da API — cada ficheiro gere um recurso (pizzas, lojas, encomendas). Existem versões em **JavaScript** e **TypeScript** para comparação. |
-| `backend/src/data/` | "Base de dados" simples usando ficheiros **JSON** — abordagem mais fácil para iniciantes antes de aprender Prisma. |
-| `backend/prisma/` | Schema e migrações do **Prisma ORM** — a abordagem profissional para gerir a base de dados PostgreSQL. |
-| `deployment/` | **8 aulas** sobre como colocar o projeto online — Docker, variáveis de ambiente, deploy no Railway, CI/CD, e domínios. |
+| Pasta                 | Descrição                                                                                                                                                             |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `frontend/`           | Aplicação **React** criada com **Vite**. Contém toda a interface que o utilizador vê no browser.                                                                      |
+| `frontend/docs/`      | **aulas** progressivas que ensinam React desde o zero — JSX, componentes, hooks, formulários, Context API.                                                            |
+| `frontend/src/`       | Código fonte organizado em **componentes** (peças reutilizáveis), **páginas** (ecrãs da app), **context** (estado global como o carrinho), e **data** (dados locais). |
+| `backend/`            | Servidor **Node.js + Express** que fornece a API REST. 
+| `backend/docs/`       | **aulas** que ensinam Node.js, Express, async/await, ficheiros JSON.
+| `backend/src/routes/` | Rotas da API — cada ficheiro gere um recurso (pizzas, lojas, encomendas). Existem versões em **JavaScript** e **TypeScript** para comparação.                         |
+| `backend/src/data/`   | "Base de dados" simples usando ficheiros **JSON** — abordagem mais fácil para iniciantes antes de aprender                                            |

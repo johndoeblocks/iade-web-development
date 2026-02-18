@@ -28,7 +28,7 @@
 
 **Frontend:** React
 
-**Backend:** Node.js + Express (opcional + Typescript + Prisma + PostgreSQL)
+**Backend:** Node.js + Express (simular base de dados com JSON)
 
 **Deploy:** Railway para termos deploys automaticos
 
