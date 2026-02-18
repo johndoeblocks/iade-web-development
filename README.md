@@ -31,6 +31,8 @@
 **Backend:** Node.js + Express (opcional + Typescript + Prisma + PostgreSQL)
 
 **Deploy:** Railway para termos deploys automaticos
+    - URL Frontend: https://resplendent-insight-production-fec0.up.railway.app/
+    - URL Backend: https://api-padre-gino-production-838d.up.railway.app/
 
 ## 🚀 Quick Start
 
