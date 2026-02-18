@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 
 import cors from 'cors';
 
@@ -60,7 +60,7 @@ app.use((req, res) => {
 });
 
 // Error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   res.status(500).json({ error: 'Erro interno do servidor' });
 });
