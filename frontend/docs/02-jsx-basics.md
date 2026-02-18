@@ -156,7 +156,7 @@ return (
 );
 ```
 
-> ⚠️ Sempre usa `key` única em listas!
+> ⚠️ Obrigatorio usar `key` em listas!
 
 ---
 

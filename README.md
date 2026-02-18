@@ -1,29 +1,20 @@
 # 🍕 Padre Gino's - Pizzaria Online
 
-**IADE Web Development Course** - Full-Stack MVP
+**IADE Web Development Course**
 
-> Construir um MVP real de e-commerce full-stack, passo a passo, usando uma pizzaria como caso prático.
+> Construir um MVP de um e-commerce, passo a passo, usando uma pizzaria como exemplo
 
 ## 📚 Estrutura do Curso
 
 | Aula | Tema | Duração |
 |------|------|---------|
-| 1 | **React** - Frontend da Pizzaria | 3 horas |
-| 2 | **Node.js** - Backend da Pizzaria | 3 horas |
-| 3 | **Deployment** - Site em Produção | 3 horas |
+| 1 | **Node.js** - Backend da Pizzaria
+| 2 | **React** - Frontend da Pizzaria
+| 3 | **Deployment** - Como colocar o site em Produção
 
 ## 🗂️ Estrutura do Repositório
 
-```
-├── frontend/          # React + Vite
-│   ├── docs/          # 📖 12 ficheiros de documentação
-│   └── src/           # Código fonte
-├── backend/           # Node.js + Express
-│   ├── docs/          # 📖 10 ficheiros de documentação
-│   ├── data/          # JSON como base de dados simples
-│   └── src/           # Código fonte
-└── deployment/        # 📖 8 ficheiros de documentação
-```
+� [Ver estrutura completa do projeto](estrutura.md)
 
 ## 🎯 Funcionalidades do MVP
 
@@ -35,22 +26,39 @@
 
 ## 🛠️ Stack Tecnológica
 
-**Frontend:** React 19 + Vite + React Router + Context API
+**Frontend:** React
 
-**Backend:** Node.js + Express + Prisma + PostgreSQL
+**Backend:** Node.js + Express (opcional + Typescript + Prisma + PostgreSQL)
 
-**DevTools:** ESLint + Prettier + Git
-
-**Deploy:** Docker + Railway
+**Deploy:** Railway para termos deploys automaticos
 
 ## 🚀 Quick Start
 
+Garante que tens o Node JS instalado.
+
 ```bash
 # Frontend
-cd frontend && npm install && npm run dev
+
+1. Abre o terminal
+2. Navega para a pasta frontend `cd frontend`
+3. Executa o comando `npm install` para instalar as dependencias
+4. Executa o comando `npm run dev`
+
+OU
+
+1 comando -> `cd frontend && npm install && npm run dev`
+
 
 # Backend
-cd backend && npm install && npm run dev
+
+1. Abre o terminal
+2. Navega para a pasta backend `cd backend`
+3. Executa o comando `npm install` para instalar as dependencias
+4. Executa o comando `npm run dev`
+
+OU
+
+1 comando -> `cd backend && npm install && npm run dev`
 ```
 
 ## 📖 Como Usar Este Repositório
@@ -69,8 +77,7 @@ cd backend && npm install && npm run dev
 
 - [React no Browser (CodeSandbox)](https://codesandbox.io/)
 - [VS Code Download](https://code.visualstudio.com/download)
+- [Node JS Download](https://nodejs.org/en/download/)
+- [NVM Download](https://github.com/nvm-sh/nvm)
 - [GitHub Student Pack](https://education.github.com/pack)
 
----
-
-**Professor:** João Manteigas | **Curso:** IADE Web Development | **Ano:** 2026

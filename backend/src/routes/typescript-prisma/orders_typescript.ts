@@ -1,15 +1,15 @@
 import express from 'express';
-import { readFile, writeFile } from 'fs/promises';
+// import { readFile, writeFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { prisma } from '../prisma';
-import { OrderStatus } from '../../generated/prisma/enums';
+import { prisma } from '../../prisma';
+import { OrderStatus } from '../../../generated/prisma/enums';
 
 const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const dataPath = join(__dirname, '../data/orders.json');
+// const dataPath = join(__dirname, '../data/orders.json');
 
 /**
  * Helper functions to read/write orders

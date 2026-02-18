@@ -31,6 +31,8 @@ lerna-debug.log*
 *.swo
 .DS_Store
 
+./backend/docs/NOTAS-AULA.md
+
 # Testing
 coverage/
 .nyc_output/

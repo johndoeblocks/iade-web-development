@@ -2,7 +2,7 @@ import express from 'express';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { prisma } from '../prisma';
+import { prisma } from '../../prisma';
 
 const router = express.Router();
 

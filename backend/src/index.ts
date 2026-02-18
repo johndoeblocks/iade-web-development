@@ -1,14 +1,11 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// import pizzasRouter from './routes/pizzas.js';
-import pizzasRouter from './routes/pizzas_typescript.js';
-
+import pizzasRouter from './routes/pizzas.js';
 import storesRouter from './routes/stores.js';
-// import ordersRouter from './routes/orders.js';
-import ordersRouter from './routes/orders_typescript.js';
+import ordersRouter from './routes/orders.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,9 +19,6 @@ app.use(express.json());
 
 // Serve static files (admin page, etc.)
 app.use(express.static(join(__dirname, 'public')));
-
-// Request logging (simple middleware example)
-
 
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
@@ -64,7 +58,7 @@ app.use((req, res) => {
 });
 
 // Error handler
-app.use((err, req, res, next) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err.message);
   res.status(500).json({ error: 'Erro interno do servidor' });
 });

@@ -23,13 +23,6 @@ const obj = null;
 obj.prop;  // TypeError: Cannot read property 'prop' of null
 ```
 
-### Erros Lógicos
-```javascript
-// Código funciona mas resultado errado
-function soma(a, b) {
-  return a - b;  // Erro lógico!
-}
-```
 
 ---
 
@@ -81,32 +74,6 @@ throw new Error('Erro genérico');
 throw new TypeError('Tipo errado');
 throw new RangeError('Fora do range');
 throw new SyntaxError('Sintaxe inválida');
-```
-
----
-
-## 🏗️ Erros Customizados
-
-```javascript
-class NotFoundError extends Error {
-  constructor(resource) {
-    super(`${resource} não encontrado`);
-    this.name = 'NotFoundError';
-    this.statusCode = 404;
-  }
-}
-
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'ValidationError';
-    this.statusCode = 400;
-  }
-}
-
-// Usar
-throw new NotFoundError('Pizza');
-throw new ValidationError('Nome é obrigatório');
 ```
 
 ---
@@ -173,35 +140,6 @@ app.use((error, req, res, next) => {
     error: 'Erro interno do servidor'
   });
 });
-```
-
----
-
-## 🔄 Async Error Wrapper
-
-Para evitar repetir try/catch:
-
-```javascript
-// utils/asyncHandler.js
-const asyncHandler = (fn) => (req, res, next) => {
-  Promise.resolve(fn(req, res, next)).catch(next);
-};
-
-export default asyncHandler;
-```
-
-```javascript
-// Uso
-import asyncHandler from '../utils/asyncHandler.js';
-
-router.get('/:id', asyncHandler(async (req, res) => {
-  const pizza = await db.findPizza(req.params.id);
-  if (!pizza) {
-    throw new NotFoundError('Pizza');
-  }
-  res.json(pizza);
-  // Não precisa de try/catch!
-}));
 ```
 
 ---

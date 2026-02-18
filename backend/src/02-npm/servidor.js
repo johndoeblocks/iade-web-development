@@ -4,7 +4,7 @@ const app = express();
 
 const pizzas = [{
     id: 1,
-    name: 'MargheritaSSS',
+    name: 'Margherita',
     price: 10,
 },
 {
