@@ -38,6 +38,7 @@ export function CartProvider({ children }) {
       removeFromCart(pizzaId);
       return;
     }
+
     setCart(prev =>
       prev.map(item =>
         item.id === pizzaId ? { ...item, quantidade } : item

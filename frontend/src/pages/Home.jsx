@@ -1,27 +1,33 @@
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import Pizza from '../components/Pizza';
-import usePizzaOfTheDay from '../hooks/usePizzaOfTheDay';
-import './Home.css';
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import Pizza from "../components/Pizza";
+import usePizzaOfTheDay from "../hooks/usePizzaOfTheDay";
+import "./Home.css";
+import { ToastContainer, toast } from "react-toastify";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * Home page - Fetches pizzas from the backend API
  */
-function Home() {
+function Home({pizzaDoDia}) {
   const { addToCart } = useCart();
+
   const [pizzas, setPizzas] = useState([]);
-  const { pizza: pizzaDoDia } = usePizzaOfTheDay();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const [searchParams, setSearchParams] = useSearchParams();
-  const categoria = searchParams.get('categoria') || '';
+
+  const categoria = searchParams.get("categoria") || "";
+
   const [categories, setCategories] = useState([]);
 
   const handleCategoriaChange = (e) => {
     const v = e.target.value;
+
+    
     if (v) setSearchParams({ categoria: v }, { replace: true });
     else setSearchParams({}, { replace: true });
   };
@@ -32,12 +38,14 @@ function Home() {
       try {
         setLoading(true);
         const res = await fetch(`${API_URL}/pizzas`);
-        if (!res.ok) throw new Error('Erro ao carregar pizzas');
+        if (!res.ok) throw new Error("Erro ao carregar pizzas");
         const allPizzas = await res.json();
-        const unique = Array.from(new Set(allPizzas.map(p => p.categoria).filter(Boolean)));
+        const unique = Array.from(
+          new Set(allPizzas.map((p) => p.categoria).filter(Boolean)),
+        );
         setCategories(unique);
       } catch (err) {
-        console.error('Fetch error:', err);
+        console.error("Fetch error:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -47,7 +55,9 @@ function Home() {
     fetchCategories();
   }, []);
 
-  const handleAddToCart = (pizza) => addToCart(pizza);
+  const handleAddToCart = (pizza) => {
+    addToCart(pizza);
+  };
 
   // Fetch pizzas when `categoria` changes
   useEffect(() => {
@@ -55,13 +65,13 @@ function Home() {
       try {
         setLoading(true);
         const url = new URL(`${API_URL}/pizzas`);
-        if (categoria) url.searchParams.set('categoria', categoria);
+        if (categoria) url.searchParams.set("categoria", categoria);
         const res = await fetch(url.toString());
-        if (!res.ok) throw new Error('Erro ao carregar pizzas');
+        if (!res.ok) throw new Error("Erro ao carregar pizzas");
         const pizzasData = await res.json();
         setPizzas(pizzasData);
       } catch (err) {
-        console.error('Fetch error:', err);
+        console.error("Fetch error:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -77,7 +87,8 @@ function Home() {
         <section className="hero">
           <div className="hero__content">
             <h1 className="hero__title">
-              As Melhores Pizzas<br />
+              As Melhores Pizzas
+              <br />
               <span className="hero__title--accent">de Portugal</span>
             </h1>
             <p className="hero__subtitle">A carregar...</p>
@@ -99,14 +110,15 @@ function Home() {
       </div>
     );
   }
-  
+
   return (
     <div className="home">
       {/* Hero Section */}
       <section className="hero">
         <div className="hero__content">
           <h1 className="hero__title">
-            As Melhores Pizzas<br />
+            As Melhores Pizzas
+            <br />
             <span className="hero__title--accent">de Portugal</span>
           </h1>
           <p className="hero__subtitle">
@@ -114,7 +126,7 @@ function Home() {
           </p>
         </div>
       </section>
-      
+
       {/* Pizza do Dia */}
       {pizzaDoDia && (
         <section className="pizza-do-dia">
@@ -130,7 +142,7 @@ function Home() {
                 €{pizzaDoDia.preco.toFixed(2)}
               </span>
             </div>
-            <button 
+            <button
               className="pizza-do-dia__btn"
               onClick={() => handleAddToCart(pizzaDoDia)}
             >
@@ -139,11 +151,13 @@ function Home() {
           </div>
         </section>
       )}
-      
+
       {/* Menu */}
       <section className="menu">
         <div className="menu__controls">
-          <label htmlFor="categoria-select" className="menu__label">Categoria:</label>
+          <label htmlFor="categoria-select" className="menu__label">
+            Categoria:
+          </label>
           <select
             id="categoria-select"
             className="menu__select"
@@ -152,14 +166,16 @@ function Home() {
           >
             <option value="">Todas</option>
             {categories.map((c) => (
-              <option key={c} value={c}>{c}</option>
+              <option key={c} value={c}>
+                {c}
+              </option>
             ))}
           </select>
         </div>
 
         <h2 className="menu__title">O Nosso Menu</h2>
         <div className="menu__grid">
-          {pizzas.map(pizza => (
+          {pizzas.map((pizza) => (
             <Pizza
               key={pizza.id}
               nome={pizza.nome}

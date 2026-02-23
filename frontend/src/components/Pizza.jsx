@@ -1,3 +1,4 @@
+import { ToastContainer, toast } from "react-toastify";
 import "./Pizza.css";
 
 /**
@@ -35,7 +36,10 @@ function Pizza({
           <span className="pizza-card__preco">€{preco.toFixed(2)}</span>
           <button
             className="pizza-card__btn"
-            onClick={onAddToCart}
+            onClick={() => {
+              onAddToCart();
+              toast.success(`${nome} adicionada ao carrinho!`);
+            }}
             disabled={!disponivel}
           >
             {disponivel ? "Adicionar" : "Indisponível"}

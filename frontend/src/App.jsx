@@ -1,12 +1,14 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { CartProvider, useCart } from './context/CartContext';
-import Header from './components/Header';
-import Home from './pages/Home';
-import Lojas from './pages/Lojas';
-import Carrinho from './pages/Carrinho';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CartProvider, useCart } from "./context/CartContext";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import Lojas from "./pages/Lojas";
+import Carrinho from "./pages/Carrinho";
 
-import Encomenda from './pages/Encomenda';
-import './App.css';
+import Encomenda from "./pages/Encomenda";
+import "./App.css";
+// import 'leaflet/dist/leaflet.css';
+import { ToastContainer } from "react-toastify";
 
 function AppContent() {
   const { cartCount } = useCart();
@@ -31,6 +33,8 @@ function App() {
   return (
     <BrowserRouter>
       <CartProvider>
+        <ToastContainer />
+
         <AppContent />
       </CartProvider>
     </BrowserRouter>
@@ -38,4 +42,3 @@ function App() {
 }
 
 export default App;
-

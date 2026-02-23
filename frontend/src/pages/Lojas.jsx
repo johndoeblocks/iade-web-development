@@ -1,5 +1,21 @@
-import { useState, useEffect } from 'react';
-import './Lojas.css';
+import { useState, useEffect, useRef } from "react";
+import "./Lojas.css";
+import Header from "../components/Header";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+// Fix default icon paths (needed when using bundlers)
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -31,17 +47,18 @@ function Lojas() {
   const [distances, setDistances] = useState({});
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState(null);
+  const mapRef = useRef();
 
   useEffect(() => {
     async function fetchStores() {
       try {
         setLoading(true);
         const res = await fetch(`${API_URL}/stores`);
-        if (!res.ok) throw new Error('Erro ao carregar lojas');
+        if (!res.ok) throw new Error("Erro ao carregar lojas");
         const data = await res.json();
         setLojas(data);
       } catch (err) {
-        console.error('Fetch error:', err);
+        console.error("Fetch error:", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -53,7 +70,7 @@ function Lojas() {
 
   function encontrarMaisPerto() {
     if (!navigator.geolocation) {
-      setGeoError('O seu browser não suporta geolocalização');
+      setGeoError("O seu browser não suporta geolocalização");
       return;
     }
 
@@ -73,7 +90,7 @@ function Lojas() {
             latitude,
             longitude,
             loja.coordenadas.lat,
-            loja.coordenadas.lng
+            loja.coordenadas.lng,
           );
           dists[loja.id] = dist;
           if (dist < minDist) {
@@ -88,13 +105,13 @@ function Lojas() {
 
         // Scroll to nearest card
         const el = document.getElementById(`loja-${closestId}`);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       },
       (err) => {
-        console.error('Geolocation error:', err);
-        setGeoError('Não foi possível obter a sua localização');
+        console.error("Geolocation error:", err);
+        setGeoError("Não foi possível obter a sua localização");
         setGeoLoading(false);
-      }
+      },
     );
   }
 
@@ -120,6 +137,8 @@ function Lojas() {
     );
   }
 
+  const position = [51.505, -0.09];
+
   return (
     <div className="lojas">
       <section className="lojas__hero">
@@ -132,18 +151,33 @@ function Lojas() {
           onClick={encontrarMaisPerto}
           disabled={geoLoading}
         >
-          {geoLoading ? '📡 A localizar...' : '📍 Loja Mais Perto de Mim'}
+          {geoLoading ? "📡 A localizar..." : "📍 Loja Mais Perto de Mim"}
         </button>
         {geoError && <p className="lojas__geo-error">{geoError}</p>}
       </section>
 
+      {/* <div>
+        <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={position}>
+                      <Popup>
+                        A pretty CSS3 popup. <br /> Easily customizable.
+                      </Popup>
+                    </Marker>
+        </MapContainer>
+      </div> */}
+
+
       <section className="lojas__list">
         <div className="lojas__grid">
-          {lojas.map(loja => (
+          {lojas.map((loja) => (
             <div
               key={loja.id}
               id={`loja-${loja.id}`}
-              className={`loja-card ${nearestId === loja.id ? 'loja-card--nearest' : ''}`}
+              className={`loja-card ${nearestId === loja.id ? "loja-card--nearest" : ""}`}
             >
               {nearestId === loja.id && (
                 <div className="loja-card__badge">⭐ Mais Perto!</div>
@@ -169,6 +203,26 @@ function Lojas() {
                   <span className="loja-card__value">{loja.horario}</span>
                 </div>
               </div>
+              {/* Small map inside the card centered on the store */}
+              <div className="loja-card__mini-map">
+                <MapContainer
+                  center={[loja.coordenadas.lat, loja.coordenadas.lng]}
+                  zoom={15}
+                  scrollWheelZoom={false}
+                  style={{ height: '160px', width: '100%', borderRadius: '8px' }}
+                  attributionControl={false}
+                  zoomControl={false}
+                >
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <Marker position={[loja.coordenadas.lat, loja.coordenadas.lng]}>
+                    <Popup>
+                      <strong>{loja.nome}</strong>
+                      <div>{loja.morada}</div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
+              </div>
+
               <a
                 href={`https://www.google.com/maps?q=${loja.coordenadas.lat},${loja.coordenadas.lng}`}
                 target="_blank"
