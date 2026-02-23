@@ -72,6 +72,19 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Limpar dados existentes
+
+
+  prisma.user.findMany(
+    {
+      where: {
+        name: {equals: "João"}
+      }
+    }
+  )
+
+  
+
+
   await prisma.orderItem.deleteMany();
   await prisma.order.deleteMany();
   await prisma.pizza.deleteMany();

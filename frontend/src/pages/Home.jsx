@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import Pizza from '../components/Pizza';
+import usePizzaOfTheDay from '../hooks/usePizzaOfTheDay';
 import './Home.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -11,29 +13,29 @@ const API_URL = import.meta.env.VITE_API_URL;
 function Home() {
   const { addToCart } = useCart();
   const [pizzas, setPizzas] = useState([]);
-  const [pizzaDoDia, setPizzaDoDia] = useState(null);
+  const { pizza: pizzaDoDia } = usePizzaOfTheDay();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoria = searchParams.get('categoria') || '';
+  const [categories, setCategories] = useState([]);
 
+  const handleCategoriaChange = (e) => {
+    const v = e.target.value;
+    if (v) setSearchParams({ categoria: v }, { replace: true });
+    else setSearchParams({}, { replace: true });
+  };
+
+  // Fetch categories on mount (derive from full pizzas list)
   useEffect(() => {
-    async function fetchData() {
+    async function fetchCategories() {
       try {
         setLoading(true);
-        
-        // Fetch pizzas and pizza of the day in parallel
-        const [pizzasRes, pizzaDoDiaRes] = await Promise.all([
-          fetch(`${API_URL}/pizzas`),
-          fetch(`${API_URL}/pizzas/pizza-of-the-day`)
-        ]);
-
-        if (!pizzasRes.ok) throw new Error('Erro ao carregar pizzas');
-        if (!pizzaDoDiaRes.ok) throw new Error('Erro ao carregar pizza do dia');
-
-        const pizzasData = await pizzasRes.json();
-        const pizzaDoDiaData = await pizzaDoDiaRes.json();
-
-        setPizzas(pizzasData);
-        setPizzaDoDia(pizzaDoDiaData);
+        const res = await fetch(`${API_URL}/pizzas`);
+        if (!res.ok) throw new Error('Erro ao carregar pizzas');
+        const allPizzas = await res.json();
+        const unique = Array.from(new Set(allPizzas.map(p => p.categoria).filter(Boolean)));
+        setCategories(unique);
       } catch (err) {
         console.error('Fetch error:', err);
         setError(err.message);
@@ -42,12 +44,32 @@ function Home() {
       }
     }
 
-    fetchData();
+    fetchCategories();
   }, []);
 
-  const handleAddToCart = (pizza) => {
-    addToCart(pizza);
-  };
+  const handleAddToCart = (pizza) => addToCart(pizza);
+
+  // Fetch pizzas when `categoria` changes
+  useEffect(() => {
+    async function fetchPizzas() {
+      try {
+        setLoading(true);
+        const url = new URL(`${API_URL}/pizzas`);
+        if (categoria) url.searchParams.set('categoria', categoria);
+        const res = await fetch(url.toString());
+        if (!res.ok) throw new Error('Erro ao carregar pizzas');
+        const pizzasData = await res.json();
+        setPizzas(pizzasData);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPizzas();
+  }, [categoria]);
 
   if (loading) {
     return (
@@ -120,6 +142,21 @@ function Home() {
       
       {/* Menu */}
       <section className="menu">
+        <div className="menu__controls">
+          <label htmlFor="categoria-select" className="menu__label">Categoria:</label>
+          <select
+            id="categoria-select"
+            className="menu__select"
+            value={categoria}
+            onChange={handleCategoriaChange}
+          >
+            <option value="">Todas</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+
         <h2 className="menu__title">O Nosso Menu</h2>
         <div className="menu__grid">
           {pizzas.map(pizza => (

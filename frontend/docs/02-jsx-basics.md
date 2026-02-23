@@ -128,7 +128,6 @@ return (
 ## 🔄 Renderização Condicional
 
 ```jsx
-const estaAberto = true;
 
 return (
   <div>

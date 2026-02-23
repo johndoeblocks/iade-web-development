@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   try {
-    const { nome, telefone, morada, items, observacoes } = req.body;
+    const { nome, telefone, morada, items, observacoes } = req.body
 
     // Validation
     if (!nome || !telefone || !morada || !items || items.length === 0) {
@@ -75,6 +75,8 @@ router.post('/', async (req, res) => {
     };
 
     orders.push(newOrder);
+
+    
     await saveOrders(orders);
 
     res.status(201).json({

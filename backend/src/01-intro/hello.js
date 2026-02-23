@@ -1,6 +1,8 @@
-import os from "os";
-
+// import os from "os";
 import http from "http";
+// import express from "express";
+
+
 
 console.log("Olá, Node.js! 🍕");
 
@@ -15,6 +17,7 @@ console.log("Olá, Node.js! 🍕");
 
 // console.log('CPUs:', os.cpus().length);
 // console.log('Memória:', os.totalmem() / 1024 / 1024 / 1024, 'GB');
+
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { "Content-Type": "text/plain" });

@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
   }
 });
 
+
 /**
  * GET /api/stores/:id
  * Returns a single store by ID
