@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getDb, saveDb, Note } from "@/lib/db";
 
+export const runtime = "nodejs";
+
 export async function GET() {
     const notes = await getDb();
     return NextResponse.json(notes);
